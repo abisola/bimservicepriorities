@@ -7,14 +7,14 @@ export default async function handler(req, res) {
   }
 
   // Check if Airtable is configured
-  if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID || !process.env.AIRTABLE_SERVICES_TABLE) {
+  if (!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN || !process.env.AIRTABLE_BASE_ID || !process.env.AIRTABLE_SERVICES_TABLE) {
     console.log('Airtable not configured, returning empty services list')
     return res.status(200).json({ services: [] })
   }
 
   try {
-    // Configure Airtable
-    const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID)
+    // Configure Airtable with Personal Access Token
+    const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID)
 
     const services = []
 
