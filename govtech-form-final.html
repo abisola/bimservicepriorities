@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GovTech Service Scoring - Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Figtree', sans-serif;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: currentColor;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: currentColor;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+    <div id="app"></div>
+
+    <script>
+        // Sample services - in production, this would be fetched from Google Sheets
+        const availableServices = [
+            { value: '', label: 'Select a service...' },
+            { value: 'passport-renewal', label: 'Passport Renewal Portal' },
+            { value: 'business-registration', label: 'Business Registration System' },
+            { value: 'property-tax', label: 'Property Tax Payment Portal' },
+            { value: 'birth-death-certificates', label: 'Birth/Death Certificate Requests' },
+            { value: 'tourism-permits', label: 'Tourism Worker Permits' },
+            { value: 'work-permits', label: 'Work Permit Applications' },
+            { value: 'school-enrollment', label: 'School Enrollment Portal' },
+            { value: 'building-permits', label: 'Building Permits System' },
+            { value: 'healthcare-appointments', label: 'Healthcare Appointment Booking' },
+            { value: 'customs-preclearance', label: 'Customs Pre-clearance' },
+            { value: 'digital-id', label: 'Digital ID Platform' },
+            { value: 'tax-filing', label: 'Online Tax Filing (Simple)' },
+            { value: 'driver-license', label: 'Driver\'s License Renewal' },
+            { value: 'land-registry', label: 'Land Registry Services' },
+            { value: 'other', label: 'Other (Please specify)' }
+        ];
+
+        // App state
+        const state = {
+            currentStep: 0,
+            formData: {
+                serviceName: '',
+                otherServiceName: '',
+                submitterName: '',
+                transactionVolume: 3,
+                painLevel: 3,
+                timeSaved: 3,
+                frequency: 3,
+                equityImpact: 3,
+                mandatory: 3,
+                technicalComplexity: 3,
+                dataReadiness: 3,
+                stakeholders: 3,
+                legalBarriers: 3,
+                teamCapability: 3,
+                infrastructureLeverage: 3,
+                timeToLaunch: 3,
+                revenueGeneration: 3,
+                costSavings: 3,
+                businessEnablement: 3,
+                sectorCriticality: 3,
+                tradeFacilitation: 3,
+                multiplierEffect: 3,
+                eodbImpact: 3,
+                manifestoMentions: 3,
+                ministerialPriority: 3,
+                executiveSponsorship: 3,
+                budgetSignals: 3,
+                devPlanAlignment: 3,
+                publicCommitment: 3,
+                timingSensitivity: 3,
+            }
+        };
+
+        const steps = [
+            'Service Selection',
+            'Value to Citizens',
+            'Feasibility',
+            'Economic Impact',
+            'Political Alignment',
+            'Review'
+        ];
+
+        // Event handlers
+        window.updateFormData = function(field, value) {
+            state.formData[field] = value;
+            render();
+        }
+
+        window.nextStep = function() {
+            if (state.currentStep < steps.length - 1) {
+                state.currentStep++;
+                render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        window.prevStep = function() {
+            if (state.currentStep > 0) {
+                state.currentStep--;
+                render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        window.handleSubmit = function() {
+            const submissionTime = new Date().toLocaleString('en-US', {
+                dateStyle: 'full',
+                timeStyle: 'long'
+            });
+            const serviceName = state.formData.serviceName === 'other' 
+                ? state.formData.otherServiceName 
+                : availableServices.find(s => s.value === state.formData.serviceName)?.label;
+            
+            alert('✅ Success! Submission Complete!\n\n' +
+                  'Service: ' + serviceName + '\n' +
+                  'Submitted by: ' + (state.formData.submitterName || 'Anonymous') + '\n' +
+                  'Timestamp: ' + submissionTime + '\n\n' +
+                  'In the real app, this data would be sent to Google Sheets with this timestamp.');
+            
+            // Reset to step 0
+            state.currentStep = 0;
+            render();
+        }
+
+        function createScoreInput(label, description, value, field, colorClass = 'emerald') {
+            const colorMap = {
+                emerald: { bg: 'bg-emerald-500', text: 'text-emerald-600', slider: 'text-emerald-600' },
+                amber: { bg: 'bg-amber-500', text: 'text-amber-600', slider: 'text-amber-500' },
+                blue: { bg: 'bg-blue-500', text: 'text-blue-600', slider: 'text-blue-500' },
+                violet: { bg: 'bg-violet-500', text: 'text-violet-600', slider: 'text-violet-500' }
+            };
+            const colors = colorMap[colorClass];
+
+            return `
+                <div class="mb-6 bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <label class="block text-sm font-semibold text-gray-900 mb-1">${label}</label>
+                    <p class="text-xs text-gray-600 mb-4 leading-relaxed">${description}</p>
+                    <div class="flex items-center gap-4">
+                        <input
+                            type="range"
+                            min="1"
+                            max="5"
+                            value="${value}"
+                            onchange="updateFormData('${field}', parseInt(this.value))"
+                            class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider ${colors.slider}"
+                        />
+                        <div class="flex items-center justify-center w-14 h-14 ${colors.bg} rounded-xl shadow-lg">
+                            <span class="text-2xl font-bold text-white">${value}</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mt-2 px-1">
+                        <span>Low (1)</span>
+                        <span>High (5)</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProgressBar() {
+            return `
+                <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        ${steps.map((step, idx) => `
+                            <div class="flex items-center ${idx < steps.length - 1 ? 'flex-1' : ''}">
+                                <div class="relative flex items-center justify-center w-12 h-12 rounded-full font-bold text-sm transition-all ${
+                                    idx <= state.currentStep 
+                                        ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg scale-110' 
+                                        : 'bg-gray-100 text-gray-400'
+                                }">
+                                    ${idx + 1}
+                                </div>
+                                ${idx < steps.length - 1 ? `
+                                    <div class="flex-1 h-1 mx-3 rounded-full ${
+                                        idx < state.currentStep ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : 'bg-gray-200'
+                                    }"></div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="flex justify-between mt-3">
+                        ${steps.map((step, idx) => `
+                            <div class="text-center" style="width: 100px">
+                                <span class="text-xs font-medium ${
+                                    idx <= state.currentStep ? 'text-indigo-600' : 'text-gray-400'
+                                }">${step}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderServiceSelection() {
+            const showOtherField = state.formData.serviceName === 'other';
+            
+            return `
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900">Service Selection</h2>
+                            <p class="text-gray-600 mt-1">Choose the digital service you're evaluating</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-5 mt-8">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Select Service <span class="text-red-500">*</span>
+                            </label>
+                            <select
+                                class="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all appearance-none bg-white"
+                                value="${state.formData.serviceName}"
+                                onchange="updateFormData('serviceName', this.value)"
+                            >
+                                ${availableServices.map(service => `
+                                    <option value="${service.value}" ${state.formData.serviceName === service.value ? 'selected' : ''}>
+                                        ${service.label}
+                                    </option>
+                                `).join('')}
+                            </select>
+                            <p class="text-xs text-gray-500 mt-2">
+                                💡 In production, this list is populated from Google Sheets
+                            </p>
+                        </div>
+
+                        ${showOtherField ? `
+                            <div class="pl-4 border-l-4 border-indigo-500">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Specify Service Name <span class="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    class="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all"
+                                    value="${state.formData.otherServiceName}"
+                                    oninput="updateFormData('otherServiceName', this.value)"
+                                    placeholder="Enter the service name"
+                                />
+                            </div>
+                        ` : ''}
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Your Name (Optional)
+                            </label>
+                            <input
+                                type="text"
+                                class="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all"
+                                value="${state.formData.submitterName}"
+                                oninput="updateFormData('submitterName', this.value)"
+                                placeholder="Your name or leave anonymous"
+                            />
+                        </div>
+
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+                            <div class="flex items-start">
+                                <svg class="w-5 h-5 text-indigo-600 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                <div class="text-sm text-indigo-800">
+                                    <p class="font-semibold mb-1">Automatic Timestamp</p>
+                                    <p class="text-indigo-700">The submission date and time will be automatically recorded when you submit the form.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderValueToCitizens() {
+            return `
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900">Value to Citizens</h2>
+                            <p class="text-gray-600 mt-1">Assess the direct benefit to Barbadian citizens</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 mt-8">
+                        ${createScoreInput(
+                            'Annual Transaction Volume',
+                            '1 = <1,000 users  •  2 = 1,000-5,000  •  3 = 5,000-20,000  •  4 = 20,000-50,000  •  5 = >50,000 users',
+                            state.formData.transactionVolume,
+                            'transactionVolume',
+                            'emerald'
+                        )}
+                        ${createScoreInput(
+                            'Current Pain Level',
+                            'How frustrating is the existing process? Consider wait times, number of visits required, form complexity, and travel burden.',
+                            state.formData.painLevel,
+                            'painLevel',
+                            'emerald'
+                        )}
+                        ${createScoreInput(
+                            'Time Saved per Transaction',
+                            '1 = <30 minutes saved  •  2 = 30-60 min  •  3 = 1-3 hours  •  4 = 3-8 hours  •  5 = >8 hours or multiple days',
+                            state.formData.timeSaved,
+                            'timeSaved',
+                            'emerald'
+                        )}
+                        ${createScoreInput(
+                            'Frequency of Need',
+                            '1 = Once in lifetime  •  2 = Every few years  •  3 = Annually  •  4 = Quarterly  •  5 = Monthly or weekly',
+                            state.formData.frequency,
+                            'frequency',
+                            'emerald'
+                        )}
+                        ${createScoreInput(
+                            'Equity Impact',
+                            'Does it serve vulnerable/underserved populations, rural communities, or reduce the digital divide?',
+                            state.formData.equityImpact,
+                            'equityImpact',
+                            'emerald'
+                        )}
+                        ${createScoreInput(
+                            'Mandatory vs Optional',
+                            '5 = Required by law/regulation  •  3 = Highly beneficial but optional  •  1 = Nice-to-have convenience',
+                            state.formData.mandatory,
+                            'mandatory',
+                            'emerald'
+                        )}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFeasibility() {
+            return `
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900">Feasibility</h2>
+                            <p class="text-gray-600 mt-1">Can we realistically deliver this service?</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 mt-8">
+                        ${createScoreInput(
+                            'Technical Complexity',
+                            '5 = Simple forms/workflows  •  3 = Moderate system integrations  •  1 = Complex multi-system architecture',
+                            state.formData.technicalComplexity,
+                            'technicalComplexity',
+                            'amber'
+                        )}
+                        ${createScoreInput(
+                            'Data Readiness',
+                            '5 = Already digitized and accessible  •  3 = Partially digitized  •  1 = Paper-based, needs full digitization',
+                            state.formData.dataReadiness,
+                            'dataReadiness',
+                            'amber'
+                        )}
+                        ${createScoreInput(
+                            'Number of Stakeholders',
+                            '5 = Single department  •  4 = 2 departments  •  3 = 3 departments  •  2 = 4-5 departments  •  1 = 6+ departments',
+                            state.formData.stakeholders,
+                            'stakeholders',
+                            'amber'
+                        )}
+                        ${createScoreInput(
+                            'Legal/Regulatory Barriers',
+                            '5 = No legal changes needed  •  3 = Policy updates only  •  1 = Requires new legislation',
+                            state.formData.legalBarriers,
+                            'legalBarriers',
+                            'amber'
+                        )}
+                        ${createScoreInput(
+                            'Team Capability Match',
+                            '5 = Fully in-house capability  •  3 = Need some external help  •  1 = Need significant external expertise',
+                            state.formData.teamCapability,
+                            'teamCapability',
+                            'amber'
+                        )}
+                        ${createScoreInput(
+                            'Infrastructure Leverage',
+                            '5 = Build extensively on existing platforms  •  3 = Some reuse possible  •  1 = Must build from scratch',
+                            state.formData.infrastructureLeverage,
+                            'infrastructureLeverage',
+                            'amber'
+                        )}
+                        ${createScoreInput(
+                            'Estimated Time to Launch',
+                            '5 = <3 months  •  4 = 3-6 months  •  3 = 6-12 months  •  2 = 12-18 months  •  1 = >18 months',
+                            state.formData.timeToLaunch,
+                            'timeToLaunch',
+                            'amber'
+                        )}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderEconomicImpact() {
+            return `
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900">Economic Impact</h2>
+                            <p class="text-gray-600 mt-1">How does this strengthen Barbados's economy?</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 mt-8">
+                        ${createScoreInput(
+                            'Revenue Generation Potential (BBD)',
+                            '1 = None  •  2 = <$100K  •  3 = $100K-$500K  •  4 = $500K-$2M  •  5 = >$2M annually',
+                            state.formData.revenueGeneration,
+                            'revenueGeneration',
+                            'blue'
+                        )}
+                        ${createScoreInput(
+                            'Cost Savings (Operational)',
+                            'Annual savings from reduced staff time, physical infrastructure, printing, etc.',
+                            state.formData.costSavings,
+                            'costSavings',
+                            'blue'
+                        )}
+                        ${createScoreInput(
+                            'Business Enablement',
+                            '5 = Directly unlocks business creation/FDI  •  4 = Significantly reduces business friction  •  1 = No direct business impact',
+                            state.formData.businessEnablement,
+                            'businessEnablement',
+                            'blue'
+                        )}
+                        ${createScoreInput(
+                            'Sector Criticality',
+                            '5 = Supports core sector (tourism/financial services)  •  3 = Important sector  •  1 = Low economic priority',
+                            state.formData.sectorCriticality,
+                            'sectorCriticality',
+                            'blue'
+                        )}
+                        ${createScoreInput(
+                            'Trade/Diaspora Facilitation',
+                            'Does it enable imports/exports, remittances, or diaspora engagement?',
+                            state.formData.tradeFacilitation,
+                            'tradeFacilitation',
+                            'blue'
+                        )}
+                        ${createScoreInput(
+                            'Multiplier Effect',
+                            '5 = Creates highly reusable platform components  •  3 = Some reusability  •  1 = Standalone service only',
+                            state.formData.multiplierEffect,
+                            'multiplierEffect',
+                            'blue'
+                        )}
+                        ${createScoreInput(
+                            'Ease of Doing Business (EODB) Impact',
+                            '5 = Directly affects World Bank EODB indicators  •  3 = Indirectly relevant  •  1 = Not relevant',
+                            state.formData.eodbImpact,
+                            'eodbImpact',
+                            'blue'
+                        )}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPoliticalAlignment() {
+            return `
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900">Political Alignment</h2>
+                            <p class="text-gray-600 mt-1">Strategic alignment and government priorities</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 mt-8">
+                        ${createScoreInput(
+                            'Manifesto/Policy Document Mentions',
+                            '5 = Explicitly in manifesto/throne speech  •  3 = Implied in policy docs  •  1 = Not mentioned',
+                            state.formData.manifestoMentions,
+                            'manifestoMentions',
+                            'violet'
+                        )}
+                        ${createScoreInput(
+                            'Ministerial Priority Level',
+                            '5 = Top 3 priority for minister  •  3 = Important but not top tier  •  1 = Low ministerial attention',
+                            state.formData.ministerialPriority,
+                            'ministerialPriority',
+                            'violet'
+                        )}
+                        ${createScoreInput(
+                            'Executive Sponsorship',
+                            '5 = PM/Cabinet champion  •  4 = Minister  •  3 = Permanent Secretary  •  2 = Dept head  •  1 = None',
+                            state.formData.executiveSponsorship,
+                            'executiveSponsorship',
+                            'violet'
+                        )}
+                        ${createScoreInput(
+                            'Budget Signals',
+                            '5 = Already budgeted  •  3 = Budget request submitted  •  1 = No budget allocation yet',
+                            state.formData.budgetSignals,
+                            'budgetSignals',
+                            'violet'
+                        )}
+                        ${createScoreInput(
+                            'National Development Plan Alignment',
+                            '5 = Direct alignment with development strategy/SDGs  •  3 = Indirect support  •  1 = Not aligned',
+                            state.formData.devPlanAlignment,
+                            'devPlanAlignment',
+                            'violet'
+                        )}
+                        ${createScoreInput(
+                            'Public Commitment/Visibility',
+                            '5 = Public announcement made  •  3 = Mentioned in speeches  •  1 = Not publicly discussed',
+                            state.formData.publicCommitment,
+                            'publicCommitment',
+                            'violet'
+                        )}
+                        ${createScoreInput(
+                            'Timing Sensitivity',
+                            '5 = Electoral deadline  •  4 = Treaty obligation  •  3 = Desirable timing  •  1 = No time pressure',
+                            state.formData.timingSensitivity,
+                            'timingSensitivity',
+                            'violet'
+                        )}
+                    </div>
+                </div>
+            `;
+        }
+
+        function calculateAverage(scores) {
+            const sum = scores.reduce((a, b) => a + b, 0);
+            return (sum / scores.length).toFixed(2);
+        }
+
+        function renderReview() {
+            const valueAvg = calculateAverage([
+                state.formData.transactionVolume, state.formData.painLevel, state.formData.timeSaved,
+                state.formData.frequency, state.formData.equityImpact, state.formData.mandatory
+            ]);
+            const feasibilityAvg = calculateAverage([
+                state.formData.technicalComplexity, state.formData.dataReadiness, state.formData.stakeholders,
+                state.formData.legalBarriers, state.formData.teamCapability, state.formData.infrastructureLeverage,
+                state.formData.timeToLaunch
+            ]);
+            const economicAvg = calculateAverage([
+                state.formData.revenueGeneration, state.formData.costSavings, state.formData.businessEnablement,
+                state.formData.sectorCriticality, state.formData.tradeFacilitation, state.formData.multiplierEffect,
+                state.formData.eodbImpact
+            ]);
+            const politicalAvg = calculateAverage([
+                state.formData.manifestoMentions, state.formData.ministerialPriority, state.formData.executiveSponsorship,
+                state.formData.budgetSignals, state.formData.devPlanAlignment, state.formData.publicCommitment,
+                state.formData.timingSensitivity
+            ]);
+
+            const serviceName = state.formData.serviceName === 'other' 
+                ? state.formData.otherServiceName 
+                : availableServices.find(s => s.value === state.formData.serviceName)?.label || 'Not selected';
+
+            return `
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900">Review & Submit</h2>
+                            <p class="text-gray-600 mt-1">Final check before submission</p>
+                        </div>
+                    </div>
+
+                    <!-- Service Info Card -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 mb-6 border border-indigo-100">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                            Service Information
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Service Name</p>
+                                <p class="font-semibold text-gray-900">${serviceName}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Submitted By</p>
+                                <p class="font-semibold text-gray-900">${state.formData.submitterName || 'Anonymous'}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Score Summary Cards -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                            <p class="text-emerald-100 text-sm font-medium mb-2">Value to Citizens</p>
+                            <p class="text-5xl font-bold">${valueAvg}</p>
+                            <p class="text-emerald-100 text-xs mt-2">Average Score</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                            <p class="text-amber-100 text-sm font-medium mb-2">Feasibility</p>
+                            <p class="text-5xl font-bold">${feasibilityAvg}</p>
+                            <p class="text-amber-100 text-xs mt-2">Average Score</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                            <p class="text-blue-100 text-sm font-medium mb-2">Economic Impact</p>
+                            <p class="text-5xl font-bold">${economicAvg}</p>
+                            <p class="text-blue-100 text-xs mt-2">Average Score</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                            <p class="text-violet-100 text-sm font-medium mb-2">Political Alignment</p>
+                            <p class="text-5xl font-bold">${politicalAvg}</p>
+                            <p class="text-violet-100 text-xs mt-2">Average Score</p>
+                        </div>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div class="bg-green-50 border-2 border-green-200 rounded-xl p-5 flex items-start">
+                        <svg class="w-6 h-6 text-green-600 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <div>
+                            <h4 class="text-green-900 font-bold mb-1">All scoring complete!</h4>
+                            <p class="text-green-800 text-sm">Your submission will be timestamped and saved to Google Sheets. Click "Submit to Google Sheets" below to complete.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function render() {
+            const canProceed = state.currentStep === 0 
+                ? (state.formData.serviceName && (state.formData.serviceName !== 'other' || state.formData.otherServiceName))
+                : true;
+
+            let content = '';
+            switch(state.currentStep) {
+                case 0: content = renderServiceSelection(); break;
+                case 1: content = renderValueToCitizens(); break;
+                case 2: content = renderFeasibility(); break;
+                case 3: content = renderEconomicImpact(); break;
+                case 4: content = renderPoliticalAlignment(); break;
+                case 5: content = renderReview(); break;
+                default: 
+                    content = renderServiceSelection(); 
+                    state.currentStep = 0; 
+                    break;
+            }
+
+            document.getElementById('app').innerHTML = `
+                <div class="container mx-auto px-4 py-12 max-w-4xl">
+                    <!-- Header -->
+                    <div class="text-center mb-8">
+                        <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-3">
+                            🇧🇧 GovTech Scoring
+                        </h1>
+                        <p class="text-xl text-gray-600 font-medium">Digital Service Prioritization Tool</p>
+                        <div class="mt-4">
+                            <span class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold shadow-lg">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                                Step ${state.currentStep + 1} of ${steps.length}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    ${renderProgressBar()}
+
+                    <!-- Form Content -->
+                    <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
+                        ${content}
+
+                        <!-- Navigation Buttons -->
+                        <div class="flex justify-between items-center mt-10 pt-8 border-t-2 border-gray-100">
+                            <button
+                                onclick="prevStep()"
+                                ${state.currentStep === 0 ? 'disabled' : ''}
+                                class="group flex items-center px-6 py-3 rounded-xl font-semibold transition-all ${
+                                    state.currentStep === 0 
+                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md'
+                                }"
+                            >
+                                <svg class="w-5 h-5 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                                Previous
+                            </button>
+
+                            ${state.currentStep < steps.length - 1 ? `
+                                <button
+                                    onclick="nextStep()"
+                                    ${!canProceed ? 'disabled' : ''}
+                                    class="group flex items-center px-8 py-3 rounded-xl font-bold text-white transition-all transform ${
+                                        !canProceed
+                                            ? 'bg-gray-300 cursor-not-allowed'
+                                            : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg hover:scale-105'
+                                    }"
+                                >
+                                    Next
+                                    <svg class="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            ` : `
+                                <button
+                                    onclick="handleSubmit()"
+                                    class="group flex items-center px-8 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all transform hover:shadow-lg hover:scale-105"
+                                >
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                    Submit to Google Sheets
+                                </button>
+                            `}
+                        </div>
+                    </div>
+
+                    <!-- Footer Info -->
+                    <div class="text-center mt-8 text-sm text-gray-600">
+                        <p>🔒 Your submission will be securely saved with automatic timestamp</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initial render
+        render();
+    </script>
+</body>
+</html>
