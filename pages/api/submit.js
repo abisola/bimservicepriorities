@@ -17,34 +17,8 @@ export default async function handler(req, res) {
     // Configure Airtable with Personal Access Token
     const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID)
 
-    // Calculate averages
-    const valueAvg = (
-      formData.transactionVolume + formData.painLevel + formData.timeSaved +
-      formData.frequency + formData.equityImpact + formData.mandatory
-    ) / 6
-
-    const feasibilityAvg = (
-      formData.technicalComplexity + formData.dataReadiness + formData.stakeholders +
-      formData.legalBarriers + formData.teamCapability + formData.infrastructureLeverage +
-      formData.timeToLaunch
-    ) / 7
-
-    const economicAvg = (
-      formData.revenueGeneration + formData.costSavings + formData.businessEnablement +
-      formData.sectorCriticality + formData.tradeFacilitation + formData.multiplierEffect +
-      formData.eodbImpact
-    ) / 7
-
-    const politicalAvg = (
-      formData.manifestoMentions + formData.ministerialPriority + formData.executiveSponsorship +
-      formData.budgetSignals + formData.devPlanAlignment + formData.publicCommitment +
-      formData.timingSensitivity
-    ) / 7
-
-    const overallScore = (valueAvg + feasibilityAvg + economicAvg + politicalAvg) / 4
-
     // Create record in Airtable
-    // Note: Adjust field names to match your Airtable schema
+    // Note: Average fields are computed by Airtable formulas, so we only send raw data
     const record = await base(process.env.AIRTABLE_SUBMISSIONS_TABLE).create([
       {
         fields: {
@@ -60,7 +34,7 @@ export default async function handler(req, res) {
           'Frequency': formData.frequency,
           'Equity Impact': formData.equityImpact,
           'Mandatory': formData.mandatory,
-          'Value to Citizens Avg': parseFloat(valueAvg.toFixed(2)),
+          // 'Value to Citizens Avg' is computed by Airtable formula
 
           // Feasibility
           'Technical Complexity': formData.technicalComplexity,
@@ -70,7 +44,7 @@ export default async function handler(req, res) {
           'Team Capability': formData.teamCapability,
           'Infrastructure Leverage': formData.infrastructureLeverage,
           'Time to Launch': formData.timeToLaunch,
-          'Feasibility Avg': parseFloat(feasibilityAvg.toFixed(2)),
+          // 'Feasibility Avg' is computed by Airtable formula
 
           // Economic Impact
           'Revenue Generation': formData.revenueGeneration,
@@ -80,7 +54,7 @@ export default async function handler(req, res) {
           'Trade Facilitation': formData.tradeFacilitation,
           'Multiplier Effect': formData.multiplierEffect,
           'EODB Impact': formData.eodbImpact,
-          'Economic Impact Avg': parseFloat(economicAvg.toFixed(2)),
+          // 'Economic Impact Avg' is computed by Airtable formula
 
           // Political Alignment
           'Manifesto Mentions': formData.manifestoMentions,
@@ -90,10 +64,9 @@ export default async function handler(req, res) {
           'Dev Plan Alignment': formData.devPlanAlignment,
           'Public Commitment': formData.publicCommitment,
           'Timing Sensitivity': formData.timingSensitivity,
-          'Political Alignment Avg': parseFloat(politicalAvg.toFixed(2)),
+          // 'Political Alignment Avg' is computed by Airtable formula
 
-          // Overall Score
-          'Overall Score': parseFloat(overallScore.toFixed(2)),
+          // 'Overall Score' is computed by Airtable formula
         }
       }
     ])
