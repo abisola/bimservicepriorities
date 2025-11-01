@@ -49,7 +49,7 @@ A web application for prioritizing digital government services in Barbados using
 
    Edit `.env.local` and add your Airtable credentials:
    ```
-   AIRTABLE_API_KEY=your_api_key
+   AIRTABLE_PERSONAL_ACCESS_TOKEN=your_personal_access_token
    AIRTABLE_BASE_ID=your_base_id
    AIRTABLE_SERVICES_TABLE=Services
    AIRTABLE_SUBMISSIONS_TABLE=Submissions
@@ -137,11 +137,19 @@ Create a table named `Submissions` with the following fields:
 
 ### 4. Get Your API Credentials
 
-1. Go to your [Airtable Account](https://airtable.com/account) page
-2. In the "API" section, click "Generate API key"
-3. Copy your API key
+1. **Create a Personal Access Token:**
+   - Go to [https://airtable.com/create/tokens](https://airtable.com/create/tokens)
+   - Click "Create new token"
+   - Give it a name (e.g., "GovTech Service Scoring")
+   - Add the following scopes:
+     - `data.records:read` - to read services
+     - `data.records:write` - to create submissions
+   - Add access to your "GovTech Service Scoring" base
+   - Click "Create token"
+   - Copy your token (starts with `pat...`)
+   - **⚠️ Important:** Save this token securely - you won't be able to see it again!
 
-4. To get your Base ID:
+2. **Get your Base ID:**
    - Go to [Airtable API Documentation](https://airtable.com/api)
    - Select your base
    - The Base ID will be shown in the URL and in the docs (format: `appXXXXXXXXXXXXXX`)
@@ -190,7 +198,7 @@ Create a table named `Submissions` with the following fields:
 
 In your Vercel project settings, add these environment variables:
 
-- `AIRTABLE_API_KEY`: Your Airtable API key
+- `AIRTABLE_PERSONAL_ACCESS_TOKEN`: Your Airtable personal access token
 - `AIRTABLE_BASE_ID`: Your Airtable base ID
 - `AIRTABLE_SERVICES_TABLE`: Services
 - `AIRTABLE_SUBMISSIONS_TABLE`: Submissions
@@ -284,7 +292,8 @@ Submits a completed form to Airtable.
 ## Troubleshooting
 
 ### Services not loading
-- Check your Airtable API credentials in environment variables
+- Check your Airtable personal access token in environment variables
+- Verify the token has `data.records:read` scope
 - Verify the Services table name matches `AIRTABLE_SERVICES_TABLE`
 - Check browser console for error messages
 

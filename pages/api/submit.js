@@ -7,15 +7,15 @@ export default async function handler(req, res) {
   }
 
   // Check if Airtable is configured
-  if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID || !process.env.AIRTABLE_SUBMISSIONS_TABLE) {
+  if (!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN || !process.env.AIRTABLE_BASE_ID || !process.env.AIRTABLE_SUBMISSIONS_TABLE) {
     return res.status(500).json({ error: 'Airtable not configured. Please set environment variables.' })
   }
 
   try {
     const formData = req.body
 
-    // Configure Airtable
-    const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID)
+    // Configure Airtable with Personal Access Token
+    const base = new Airtable({ apiKey: process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN }).base(process.env.AIRTABLE_BASE_ID)
 
     // Calculate averages
     const valueAvg = (

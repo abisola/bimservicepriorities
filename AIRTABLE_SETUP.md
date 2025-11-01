@@ -182,15 +182,26 @@ AVERAGE(
 )
 ```
 
-### Step 4: Get Your API Key
+### Step 4: Create a Personal Access Token
 
-1. Click on your profile picture (top right)
-2. Go to "Account"
-3. Scroll to the "API" section
-4. Click "Generate API key" if you don't have one
-5. Copy your API key (starts with `key...`)
+**Note:** Airtable has deprecated API keys in favor of personal access tokens, which provide better security and more granular permissions.
 
-**⚠️ Keep this secret!** Never commit it to Git or share it publicly.
+1. Go to [https://airtable.com/create/tokens](https://airtable.com/create/tokens)
+2. Click "Create new token" or "Create token"
+3. Give your token a descriptive name (e.g., "GovTech Service Scoring App")
+4. **Add Scopes:** Select the following permissions:
+   - `data.records:read` - Required to fetch services from the Services table
+   - `data.records:write` - Required to create new submissions in the Submissions table
+5. **Add Access:** Under "Access", click "Add a base" and select your "GovTech Service Scoring" base
+6. Click "Create token"
+7. **Copy your token immediately** - it starts with `pat...` (e.g., `patAbCd1234567890.xyz...`)
+8. **⚠️ IMPORTANT:** Save this token securely right away - you won't be able to see it again!
+
+**Security Best Practices:**
+- Never commit tokens to Git or share them publicly
+- Store them securely in environment variables
+- If a token is compromised, revoke it immediately and create a new one
+- Use separate tokens for development and production environments
 
 ### Step 5: Get Your Base ID
 
@@ -205,11 +216,16 @@ AVERAGE(
 2. Fill in your credentials:
 
 ```env
-AIRTABLE_API_KEY=keyYourApiKeyHere
+AIRTABLE_PERSONAL_ACCESS_TOKEN=patYourTokenHere.xxxxxxxxxxxxxxxxxxxxxxxxxx
 AIRTABLE_BASE_ID=appYourBaseIdHere
 AIRTABLE_SERVICES_TABLE=Services
 AIRTABLE_SUBMISSIONS_TABLE=Submissions
 ```
+
+**Important Notes:**
+- Use your personal access token (starts with `pat`), not the deprecated API key
+- The token must have both `data.records:read` and `data.records:write` scopes
+- The token must have access to your specific base
 
 ## Optional Enhancements
 
@@ -249,10 +265,14 @@ You can create Airtable automations to:
 
 ### For Development
 - Keep base private during development
-- Use environment variables for API keys
+- Use environment variables for personal access tokens (never commit them to Git)
+- Create a separate token for development with limited scope if needed
 
 ### For Production
-- Consider creating a separate Airtable account for production
+- Create a separate personal access token specifically for production
+- Consider using a service account or dedicated Airtable account for production
+- Use minimal required scopes for production tokens
+- Regularly rotate tokens for better security
 - Use Airtable's collaboration features to share with team members
 - Set up appropriate permissions (Editor, Commenter, Read-only)
 
@@ -265,9 +285,11 @@ Regularly backup your data:
 
 ## Troubleshooting
 
-**Can't find API key:**
-- Make sure you're logged into the correct Airtable account
-- API keys are account-wide, not base-specific
+**Token authentication issues:**
+- Verify your token starts with `pat` (not `key` - that's the old API key format)
+- Check that you've added the required scopes: `data.records:read` and `data.records:write`
+- Ensure the token has access to the specific base you're using
+- If you see "Invalid token" errors, the token may have been revoked or expired - create a new one
 
 **Base ID not working:**
 - Make sure it starts with `app`
