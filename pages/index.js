@@ -62,15 +62,19 @@ export default function Home() {
       const data = await response.json()
 
       if (data.services && data.services.length > 0) {
+        // Sort services alphabetically by label
+        const sortedServices = [...data.services].sort((a, b) =>
+          a.label.localeCompare(b.label)
+        )
+
         setAvailableServices([
           { value: '', label: 'Select a service...' },
-          ...data.services,
+          ...sortedServices,
           { value: 'other', label: 'Other (Please specify)' }
         ])
       } else {
         // Fallback to default services if Airtable is not configured
-        setAvailableServices([
-          { value: '', label: 'Select a service...' },
+        const defaultServices = [
           { value: 'passport-renewal', label: 'Passport Renewal Portal' },
           { value: 'business-registration', label: 'Business Registration System' },
           { value: 'property-tax', label: 'Property Tax Payment Portal' },
@@ -85,6 +89,11 @@ export default function Home() {
           { value: 'tax-filing', label: 'Online Tax Filing (Simple)' },
           { value: 'driver-license', label: 'Driver\'s License Renewal' },
           { value: 'land-registry', label: 'Land Registry Services' },
+        ].sort((a, b) => a.label.localeCompare(b.label))
+
+        setAvailableServices([
+          { value: '', label: 'Select a service...' },
+          ...defaultServices,
           { value: 'other', label: 'Other (Please specify)' }
         ])
       }
