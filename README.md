@@ -196,14 +196,30 @@ Create a table named `Submissions` with the following fields:
 
 ### Setting Environment Variables in Vercel
 
-In your Vercel project settings, add these environment variables:
+You need to set environment variables directly in the Vercel dashboard:
 
-- `AIRTABLE_PERSONAL_ACCESS_TOKEN`: Your Airtable personal access token
-- `AIRTABLE_BASE_ID`: Your Airtable base ID
-- `AIRTABLE_SERVICES_TABLE`: Services
-- `AIRTABLE_SUBMISSIONS_TABLE`: Submissions
+1. Go to your Vercel project dashboard
+2. Navigate to **Settings** → **Environment Variables**
+3. Add each variable with its value:
+   - **Variable Name**: `AIRTABLE_PERSONAL_ACCESS_TOKEN`
+     - **Value**: Your personal access token (starts with `pat...`)
+     - **Environments**: Select Production, Preview, and Development
+   - **Variable Name**: `AIRTABLE_BASE_ID`
+     - **Value**: Your base ID (starts with `app...`)
+     - **Environments**: Select Production, Preview, and Development
+   - **Variable Name**: `AIRTABLE_SERVICES_TABLE`
+     - **Value**: `Services`
+     - **Environments**: Select Production, Preview, and Development
+   - **Variable Name**: `AIRTABLE_SUBMISSIONS_TABLE`
+     - **Value**: `Submissions`
+     - **Environments**: Select Production, Preview, and Development
+4. Click "Save" for each variable
+5. Redeploy your project for the changes to take effect
 
-Make sure to add them for all environments (Production, Preview, Development).
+**Important Notes:**
+- Environment variables are set through the Vercel dashboard, not in `vercel.json`
+- Make sure to select all three environments (Production, Preview, Development) for each variable
+- After adding variables, trigger a new deployment for them to take effect
 
 ## Project Structure
 

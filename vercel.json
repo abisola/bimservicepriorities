@@ -2,11 +2,5 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "env": {
-    "AIRTABLE_PERSONAL_ACCESS_TOKEN": "@airtable_personal_access_token",
-    "AIRTABLE_BASE_ID": "@airtable_base_id",
-    "AIRTABLE_SERVICES_TABLE": "@airtable_services_table",
-    "AIRTABLE_SUBMISSIONS_TABLE": "@airtable_submissions_table"
-  }
+  "framework": "nextjs"
 }
