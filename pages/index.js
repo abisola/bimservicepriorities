@@ -226,6 +226,42 @@ export default function Home() {
     )
   }
 
+  const getServiceDisplayName = () => {
+    if (formData.serviceName === 'other') {
+      return formData.otherServiceName || 'Other Service'
+    }
+    return availableServices.find(s => s.value === formData.serviceName)?.label || 'Not selected'
+  }
+
+  const renderServiceBanner = () => {
+    if (currentStep === 0) return null
+
+    const serviceName = getServiceDisplayName()
+
+    return (
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-xl p-6 mb-6 text-white">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <svg className="w-8 h-8 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+              <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <p className="text-xs font-medium text-indigo-200 uppercase tracking-wide">Scoring Service</p>
+              <h3 className="text-2xl font-bold">{serviceName}</h3>
+            </div>
+          </div>
+          <div className="hidden sm:flex items-center px-4 py-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
+            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm font-semibold">Selected</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const renderProgressBar = () => (
     <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
@@ -749,6 +785,8 @@ export default function Home() {
           </div>
 
           {renderProgressBar()}
+
+          {renderServiceBanner()}
 
           <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
             {content}
