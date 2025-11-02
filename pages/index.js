@@ -7,6 +7,8 @@ export default function Home() {
   ])
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccessPage, setShowSuccessPage] = useState(false)
+  const [submissionDetails, setSubmissionDetails] = useState(null)
   const [formData, setFormData] = useState({
     serviceName: '',
     otherServiceName: '',
@@ -114,6 +116,45 @@ export default function Home() {
     }
   }
 
+  const resetForm = () => {
+    setCurrentStep(0)
+    setShowSuccessPage(false)
+    setSubmissionDetails(null)
+    setFormData({
+      serviceName: '',
+      otherServiceName: '',
+      submitterName: '',
+      transactionVolume: 3,
+      painLevel: 3,
+      timeSaved: 3,
+      frequency: 3,
+      equityImpact: 3,
+      mandatory: 3,
+      technicalComplexity: 3,
+      dataReadiness: 3,
+      stakeholders: 3,
+      legalBarriers: 3,
+      teamCapability: 3,
+      infrastructureLeverage: 3,
+      timeToLaunch: 3,
+      revenueGeneration: 3,
+      costSavings: 3,
+      businessEnablement: 3,
+      sectorCriticality: 3,
+      tradeFacilitation: 3,
+      multiplierEffect: 3,
+      eodbImpact: 3,
+      manifestoMentions: 3,
+      ministerialPriority: 3,
+      executiveSponsorship: 3,
+      budgetSignals: 3,
+      devPlanAlignment: 3,
+      publicCommitment: 3,
+      timingSensitivity: 3,
+    })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const handleSubmit = async () => {
     setIsSubmitting(true)
 
@@ -139,48 +180,18 @@ export default function Home() {
       const result = await response.json()
 
       if (response.ok) {
-        alert('✅ Success! Your submission has been saved to Airtable!\\n\\n' +
-              'Service: ' + serviceName + '\\n' +
-              'Submitted by: ' + (formData.submitterName || 'Anonymous') + '\\n' +
-              'Timestamp: ' + new Date().toLocaleString('en-US', {
-                dateStyle: 'full',
-                timeStyle: 'long'
-              }))
-
-        // Reset form
-        setCurrentStep(0)
-        setFormData({
-          serviceName: '',
-          otherServiceName: '',
-          submitterName: '',
-          transactionVolume: 3,
-          painLevel: 3,
-          timeSaved: 3,
-          frequency: 3,
-          equityImpact: 3,
-          mandatory: 3,
-          technicalComplexity: 3,
-          dataReadiness: 3,
-          stakeholders: 3,
-          legalBarriers: 3,
-          teamCapability: 3,
-          infrastructureLeverage: 3,
-          timeToLaunch: 3,
-          revenueGeneration: 3,
-          costSavings: 3,
-          businessEnablement: 3,
-          sectorCriticality: 3,
-          tradeFacilitation: 3,
-          multiplierEffect: 3,
-          eodbImpact: 3,
-          manifestoMentions: 3,
-          ministerialPriority: 3,
-          executiveSponsorship: 3,
-          budgetSignals: 3,
-          devPlanAlignment: 3,
-          publicCommitment: 3,
-          timingSensitivity: 3,
+        // Store submission details and show success page
+        setSubmissionDetails({
+          serviceName,
+          submitterName: formData.submitterName || 'Anonymous',
+          timestamp: new Date().toLocaleString('en-US', {
+            dateStyle: 'full',
+            timeStyle: 'long'
+          }),
+          recordId: result.recordId
         })
+        setShowSuccessPage(true)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         alert('❌ Error: ' + (result.error || 'Failed to submit. Please try again.'))
       }
@@ -262,37 +273,61 @@ export default function Home() {
     )
   }
 
-  const renderProgressBar = () => (
-    <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        {steps.map((step, idx) => (
-          <div key={idx} className={`flex items-center ${idx < steps.length - 1 ? 'flex-1' : ''}`}>
-            <div className={`relative flex items-center justify-center w-12 h-12 rounded-full font-bold text-sm transition-all ${
-              idx <= currentStep
-                ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg scale-110'
-                : 'bg-gray-100 text-gray-400'
-            }`}>
-              {idx + 1}
-            </div>
-            {idx < steps.length - 1 && (
-              <div className={`flex-1 h-1 mx-3 rounded-full ${
-                idx < currentStep ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : 'bg-gray-200'
-              }`}></div>
-            )}
-          </div>
-        ))}
+  const renderProgressBar = () => {
+    // Define color schemes for each step
+    const getStepColors = (idx) => {
+      const colorSchemes = {
+        0: { bg: 'from-indigo-500 to-purple-600', line: 'from-indigo-500 to-purple-600', text: 'text-indigo-600' }, // Service Selection
+        1: { bg: 'from-emerald-500 to-teal-600', line: 'from-emerald-500 to-teal-600', text: 'text-emerald-600' }, // Value to Citizens
+        2: { bg: 'from-amber-500 to-orange-600', line: 'from-amber-500 to-orange-600', text: 'text-amber-600' }, // Feasibility
+        3: { bg: 'from-blue-500 to-cyan-600', line: 'from-blue-500 to-cyan-600', text: 'text-blue-600' }, // Economic Impact
+        4: { bg: 'from-violet-500 to-purple-600', line: 'from-violet-500 to-purple-600', text: 'text-violet-600' }, // Political Alignment
+        5: { bg: 'from-indigo-500 to-purple-600', line: 'from-indigo-500 to-purple-600', text: 'text-indigo-600' } // Review
+      }
+      return colorSchemes[idx] || colorSchemes[0]
+    }
+
+    return (
+      <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          {steps.map((step, idx) => {
+            const colors = getStepColors(idx)
+            const isActive = idx <= currentStep
+            const isCurrentStep = idx === currentStep
+
+            return (
+              <div key={idx} className={`flex items-center ${idx < steps.length - 1 ? 'flex-1' : ''}`}>
+                <div className={`relative flex items-center justify-center w-12 h-12 rounded-full font-bold text-sm transition-all ${
+                  isActive
+                    ? `bg-gradient-to-br ${colors.bg} text-white shadow-lg ${isCurrentStep ? 'scale-110' : ''}`
+                    : 'bg-gray-100 text-gray-400'
+                }`}>
+                  {idx + 1}
+                </div>
+                {idx < steps.length - 1 && (
+                  <div className={`flex-1 h-1 mx-3 rounded-full ${
+                    idx < currentStep ? `bg-gradient-to-r ${getStepColors(idx + 1).line}` : 'bg-gray-200'
+                  }`}></div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+        <div className="flex justify-between mt-3">
+          {steps.map((step, idx) => {
+            const colors = getStepColors(idx)
+            return (
+              <div key={idx} className="text-center" style={{ width: '100px' }}>
+                <span className={`text-xs font-medium ${
+                  idx <= currentStep ? colors.text : 'text-gray-400'
+                }`}>{step}</span>
+              </div>
+            )
+          })}
+        </div>
       </div>
-      <div className="flex justify-between mt-3">
-        {steps.map((step, idx) => (
-          <div key={idx} className="text-center" style={{ width: '100px' }}>
-            <span className={`text-xs font-medium ${
-              idx <= currentStep ? 'text-indigo-600' : 'text-gray-400'
-            }`}>{step}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+    )
+  }
 
   const renderServiceSelection = () => {
     const showOtherField = formData.serviceName === 'other'
@@ -741,6 +776,76 @@ export default function Home() {
     )
   }
 
+  const renderSuccessPage = () => {
+    if (!submissionDetails) return null
+
+    return (
+      <div className="text-center">
+        <div className="mb-8">
+          <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl animate-bounce">
+            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 className="text-4xl font-black text-gray-900 mb-3">Submission Successful!</h2>
+          <p className="text-lg text-gray-600">Your service evaluation has been submitted to GovTech Barbados</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 mb-8 border border-indigo-100">
+          <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center justify-center">
+            <svg className="w-5 h-5 mr-2 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            Submission Details
+          </h3>
+          <div className="space-y-4 text-left max-w-md mx-auto">
+            <div className="flex justify-between items-center pb-3 border-b border-indigo-200">
+              <span className="text-sm font-medium text-gray-600">Service Name</span>
+              <span className="text-sm font-bold text-gray-900">{submissionDetails.serviceName}</span>
+            </div>
+            <div className="flex justify-between items-center pb-3 border-b border-indigo-200">
+              <span className="text-sm font-medium text-gray-600">Submitted By</span>
+              <span className="text-sm font-bold text-gray-900">{submissionDetails.submitterName}</span>
+            </div>
+            <div className="flex justify-between items-center pb-3 border-b border-indigo-200">
+              <span className="text-sm font-medium text-gray-600">Timestamp</span>
+              <span className="text-sm font-bold text-gray-900">{submissionDetails.timestamp}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium text-gray-600">Record ID</span>
+              <span className="text-sm font-mono text-indigo-600">{submissionDetails.recordId}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-green-50 border-2 border-green-200 rounded-xl p-6 mb-8">
+          <div className="flex items-start">
+            <svg className="w-6 h-6 text-green-600 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <div className="text-left">
+              <h4 className="text-green-900 font-bold mb-1">What happens next?</h4>
+              <p className="text-green-800 text-sm">
+                Your submission has been securely saved to Airtable and will be reviewed by the GovTech Barbados team.
+                The scoring data will help prioritize digital service development for Barbados.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={resetForm}
+          className="group inline-flex items-center px-8 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:shadow-lg hover:scale-105"
+        >
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Score Another Service
+        </button>
+      </div>
+    )
+  }
+
   const canProceed = currentStep === 0
     ? (formData.serviceName && (formData.serviceName !== 'other' || formData.otherServiceName))
     : true
@@ -759,6 +864,38 @@ export default function Home() {
       break
   }
 
+  // If success page should be shown, render that instead
+  if (showSuccessPage) {
+    return (
+      <>
+        <Head>
+          <title>Submission Successful - GovTech Service Scoring</title>
+          <meta name="description" content="Digital Service Prioritization Tool for GovTech Barbados" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+        </Head>
+
+        <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+          <div className="container mx-auto px-4 py-12 max-w-4xl">
+            <div className="text-center mb-8">
+              <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-3">
+                Barbados GovTech Scoring
+              </h1>
+              <p className="text-xl text-gray-600 font-medium">Digital Service Prioritization Tool</p>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
+              {renderSuccessPage()}
+            </div>
+
+            <div className="text-center mt-8 text-sm text-gray-600">
+              <p>🔒 Your data is securely stored and timestamped</p>
+            </div>
+          </div>
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
       <Head>
@@ -771,7 +908,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-12 max-w-4xl">
           <div className="text-center mb-8">
             <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-3">
-              🇧🇧 GovTech Scoring
+              Barbados GovTech Scoring
             </h1>
             <p className="text-xl text-gray-600 font-medium">Digital Service Prioritization Tool</p>
             <div className="mt-4">
@@ -831,7 +968,7 @@ export default function Home() {
                   <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  {isSubmitting ? 'Submitting...' : 'Submit to Airtable'}
+                  {isSubmitting ? 'Submitting...' : 'Submit to GovTech Barbados'}
                 </button>
               )}
             </div>
