@@ -222,9 +222,9 @@ export default function Home() {
     const colors = colorMap[colorClass]
 
     return (
-      <div key={field} className="mb-6 bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-        <label className="block text-sm font-semibold text-gray-900 mb-1">{label}</label>
-        <p className="text-xs text-gray-600 mb-4 leading-relaxed">{description}</p>
+      <div key={field} className="mb-6 bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+        <label className="block text-base font-bold text-gray-900 mb-2">{label}</label>
+        <p className="text-base text-gray-700 mb-5 leading-relaxed">{description}</p>
         <div className="flex items-center gap-4">
           <input
             type="range"
@@ -232,13 +232,14 @@ export default function Home() {
             max="5"
             value={value}
             onChange={(e) => updateFormData(field, parseInt(e.target.value))}
-            className={`flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider ${colors.slider}`}
+            className={`flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider ${colors.slider}`}
+            style={{ touchAction: 'none' }}
           />
-          <div className={`flex items-center justify-center w-14 h-14 ${colors.bg} rounded-xl shadow-lg`}>
-            <span className="text-2xl font-bold text-white">{value}</span>
+          <div className={`flex items-center justify-center w-16 h-16 ${colors.bg} rounded-xl shadow-lg`}>
+            <span className="text-3xl font-bold text-white">{value}</span>
           </div>
         </div>
-        <div className="flex justify-between text-xs text-gray-500 mt-2 px-1">
+        <div className="flex justify-between text-sm font-medium text-gray-600 mt-3 px-1">
           <span>Low (1)</span>
           <span>High (5)</span>
         </div>
@@ -259,7 +260,7 @@ export default function Home() {
     const serviceName = getServiceDisplayName()
 
     return (
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-xl p-6 mb-6 text-white">
+      <div className="bg-gradient-to-r from-blue-700 to-blue-900 rounded-2xl shadow-xl p-6 mb-6 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <svg className="w-8 h-8 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -267,7 +268,7 @@ export default function Home() {
               <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
             </svg>
             <div>
-              <p className="text-xs font-medium text-indigo-200 uppercase tracking-wide">Scoring Service</p>
+              <p className="text-xs font-medium text-blue-200 uppercase tracking-wide">Scoring Service</p>
               <h3 className="text-2xl font-bold">{serviceName}</h3>
             </div>
           </div>
@@ -286,12 +287,12 @@ export default function Home() {
     // Define color schemes for each step
     const getStepColors = (idx) => {
       const colorSchemes = {
-        0: { bg: 'from-indigo-500 to-purple-600', line: 'from-indigo-500 to-purple-600', text: 'text-indigo-600' }, // Service Selection
+        0: { bg: 'from-blue-700 to-blue-900', line: 'from-blue-700 to-blue-900', text: 'text-blue-700' }, // Service Selection
         1: { bg: 'from-emerald-500 to-teal-600', line: 'from-emerald-500 to-teal-600', text: 'text-emerald-600' }, // Value to Citizens
         2: { bg: 'from-amber-500 to-orange-600', line: 'from-amber-500 to-orange-600', text: 'text-amber-600' }, // Feasibility
         3: { bg: 'from-blue-500 to-cyan-600', line: 'from-blue-500 to-cyan-600', text: 'text-blue-600' }, // Economic Impact
         4: { bg: 'from-violet-500 to-purple-600', line: 'from-violet-500 to-purple-600', text: 'text-violet-600' }, // Political Alignment
-        5: { bg: 'from-indigo-500 to-purple-600', line: 'from-indigo-500 to-purple-600', text: 'text-indigo-600' } // Review
+        5: { bg: 'from-blue-700 to-blue-900', line: 'from-blue-700 to-blue-900', text: 'text-blue-700' } // Review
       }
       return colorSchemes[idx] || colorSchemes[0]
     }
@@ -344,7 +345,7 @@ export default function Home() {
     return (
       <div>
         <div className="flex items-center mb-6">
-          <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-700 to-blue-900 rounded-xl flex items-center justify-center mr-4 shadow-lg">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
@@ -352,6 +353,20 @@ export default function Home() {
           <div>
             <h2 className="text-3xl font-bold text-gray-900">Service Selection</h2>
             <p className="text-gray-600 mt-1">Choose the digital service you&apos;re evaluating</p>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border-l-4 border-blue-700 rounded-r-lg p-5 mb-8">
+          <div className="flex items-start">
+            <svg className="w-6 h-6 text-blue-700 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <h3 className="text-lg font-bold text-blue-900 mb-2">How to use this form</h3>
+              <p className="text-base text-blue-800 leading-relaxed">
+                You can use this service to help prioritise which Government services GovTech Barbados should focus on. Answer the questions to the best of your ability.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -526,20 +541,6 @@ export default function Home() {
           'amber'
         )}
         {createScoreInput(
-          'Team Capability Match',
-          '5 = Fully in-house capability  •  3 = Need some external help  •  1 = Need significant external expertise',
-          formData.teamCapability,
-          'teamCapability',
-          'amber'
-        )}
-        {createScoreInput(
-          'Infrastructure Leverage',
-          '5 = Build extensively on existing platforms  •  3 = Some reuse possible  •  1 = Must build from scratch',
-          formData.infrastructureLeverage,
-          'infrastructureLeverage',
-          'amber'
-        )}
-        {createScoreInput(
           'Estimated Time to Launch',
           '5 = <3 months  •  4 = 3-6 months  •  3 = 6-12 months  •  2 = 12-18 months  •  1 = >18 months',
           formData.timeToLaunch,
@@ -601,13 +602,6 @@ export default function Home() {
           'blue'
         )}
         {createScoreInput(
-          'Multiplier Effect',
-          '5 = Creates highly reusable platform components  •  3 = Some reusability  •  1 = Standalone service only',
-          formData.multiplierEffect,
-          'multiplierEffect',
-          'blue'
-        )}
-        {createScoreInput(
           'Ease of Doing Business (EODB) Impact',
           '5 = Directly affects World Bank EODB indicators  •  3 = Indirectly relevant  •  1 = Not relevant',
           formData.eodbImpact,
@@ -662,17 +656,10 @@ export default function Home() {
           'violet'
         )}
         {createScoreInput(
-          'National Development Plan Alignment',
-          '5 = Direct alignment with development strategy/SDGs  •  3 = Indirect support  •  1 = Not aligned',
+          'Mission Barbados Alignment',
+          '5 = Direct alignment with Mission Barbados/SDGs  •  3 = Indirect support  •  1 = Not aligned',
           formData.devPlanAlignment,
           'devPlanAlignment',
-          'violet'
-        )}
-        {createScoreInput(
-          'Public Commitment/Visibility',
-          '5 = Public announcement made  •  3 = Mentioned in speeches  •  1 = Not publicly discussed',
-          formData.publicCommitment,
-          'publicCommitment',
           'violet'
         )}
         {createScoreInput(
@@ -698,18 +685,15 @@ export default function Home() {
     ])
     const feasibilityAvg = calculateAverage([
       formData.technicalComplexity, formData.dataReadiness, formData.stakeholders,
-      formData.legalBarriers, formData.teamCapability, formData.infrastructureLeverage,
-      formData.timeToLaunch
+      formData.legalBarriers, formData.timeToLaunch
     ])
     const economicAvg = calculateAverage([
       formData.revenueGeneration, formData.costSavings, formData.businessEnablement,
-      formData.sectorCriticality, formData.tradeFacilitation, formData.multiplierEffect,
-      formData.eodbImpact
+      formData.sectorCriticality, formData.tradeFacilitation, formData.eodbImpact
     ])
     const politicalAvg = calculateAverage([
       formData.manifestoMentions, formData.ministerialPriority, formData.executiveSponsorship,
-      formData.budgetSignals, formData.devPlanAlignment, formData.publicCommitment,
-      formData.timingSensitivity
+      formData.budgetSignals, formData.devPlanAlignment, formData.timingSensitivity
     ])
 
     const serviceName = formData.serviceName === 'other'
@@ -719,7 +703,7 @@ export default function Home() {
     return (
       <div>
         <div className="flex items-center mb-6">
-          <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-700 to-blue-900 rounded-xl flex items-center justify-center mr-4 shadow-lg">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -730,9 +714,9 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 mb-6 border border-indigo-100">
+        <div className="bg-blue-50 rounded-2xl p-6 mb-6 border border-blue-200">
           <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-            <svg className="w-5 h-5 mr-2 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 mr-2 text-blue-700" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
             Service Information
@@ -844,7 +828,7 @@ export default function Home() {
 
         <button
           onClick={resetForm}
-          className="group inline-flex items-center px-8 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:shadow-lg hover:scale-105"
+          className="group inline-flex items-center px-8 py-4 rounded-xl font-bold text-white bg-blue-700 hover:bg-blue-800 transition-all transform hover:shadow-lg hover:scale-105"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -886,10 +870,10 @@ export default function Home() {
         <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
           <div className="container mx-auto px-4 py-12 max-w-4xl">
             <div className="text-center mb-8">
-              <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-3">
+              <h1 className="text-5xl md:text-6xl font-black text-blue-900 mb-3">
                 Barbados GovTech Scoring
               </h1>
-              <p className="text-xl text-gray-600 font-medium">Digital Service Prioritization Tool</p>
+              <p className="text-xl text-gray-700 font-medium">Digital Service Prioritization Tool</p>
             </div>
 
             <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
@@ -916,12 +900,12 @@ export default function Home() {
       <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
         <div className="container mx-auto px-4 py-12 max-w-4xl">
           <div className="text-center mb-8">
-            <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-3">
+            <h1 className="text-5xl md:text-6xl font-black text-blue-900 mb-3">
               Barbados GovTech Scoring
             </h1>
-            <p className="text-xl text-gray-600 font-medium">Digital Service Prioritization Tool</p>
+            <p className="text-xl text-gray-700 font-medium">Digital Service Prioritization Tool</p>
             <div className="mt-4">
-              <span className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold shadow-lg">
+              <span className="inline-flex items-center px-4 py-2 rounded-full bg-blue-700 text-white text-sm font-semibold shadow-lg">
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
@@ -960,7 +944,7 @@ export default function Home() {
                   className={`group flex items-center px-8 py-3 rounded-xl font-bold text-white transition-all transform ${
                     !canProceed
                       ? 'bg-gray-300 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg hover:scale-105'
+                      : 'bg-blue-700 hover:bg-blue-800 hover:shadow-lg hover:scale-105'
                   }`}
                 >
                   Next
@@ -972,7 +956,7 @@ export default function Home() {
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="group flex items-center px-8 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all transform hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group flex items-center px-8 py-3 rounded-xl font-bold text-white bg-green-700 hover:bg-green-800 transition-all transform hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
